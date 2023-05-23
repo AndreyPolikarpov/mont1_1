@@ -5,6 +5,9 @@
 #include <vector>
 #include <stdexcept>
 #include <fstream>
+#include <string>
+#include <tuple>
+#include <algorithm>
 
 #include "lib.h"
 
@@ -14,63 +17,64 @@
 // ("11.", '.') -> ["11", ""]
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
-std::vector<std::string> split(const std::string &str, char d)
+auto split(const std::string &str, char d)
 {
-    std::vector<std::string> r;
-
+    std::vector<int> r;
+    int i{0};
     std::string::size_type start = 0;
     std::string::size_type stop = str.find_first_of(d);
-    while(stop != std::string::npos)
-    {
-        r.push_back(str.substr(start, stop - start));
+    while(stop != std::string::npos) {
 
-        start = stop + 1;
-        stop = str.find_first_of(d, start);
+      //std::cout << str.substr(start, stop - start).c_str() << std::endl;
+      r.push_back(std::atoi(str.substr(start, stop - start).c_str()));
+      ++i;      
+      start = stop + 1;
+      stop = str.find_first_of(d, start);
+
+      if(i > 3) break;
     }
 
-    r.push_back(str.substr(start));
+    //std::cout << str.substr(start, stop - start).c_str();
+    r.push_back(std::atoi(str.substr(start, stop - start).c_str()));
 
     return r;
 }
 
-int main(int argc, char const *argv[])
-{
-  std::cout << "Version: " << version() << std::endl;
+int main(int argc, char const *argv[]) {
+    try {
+        std::vector<std::vector<int>> ip_pool;
 
-    try
-    {
-        if((argc < 2) || (argc > 2))
-          throw std::invalid_argument( "не верное количество подаваемых параметров " );
+        for(std::string line; std::getline(std::cin, line);) {
+          std::size_t found = line.find('\t');
+          if(found == std::string::npos)
+            break;
 
-        std::string read_s; // сюда будем класть считанные строки
-        std::ifstream file(argv[argc]);
-
-        while(std::getline(file, read_s)){
-        
-        }
-        
-        std::vector<std::vector<std::string> > ip_pool;
-
-        for(std::string line; std::getline(std::cin, line);)
-        {
-            std::vector<std::string> v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0), '.'));
+          std::string tab1 = line.substr(0, found);
+          ip_pool.push_back(split(tab1, '.'));
         }
 
         // TODO reverse lexicographically sort
 
-        for(std::vector<std::vector<std::string> >::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
-        {
-            for(std::vector<std::string>::const_iterator ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
-            {
-                if (ip_part != ip->cbegin())
-                {
-                    std::cout << ".";
+        for(auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip) {
+          /*
+          for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part) {
+              if (ip_part != ip->cbegin())
+              {
+                  std::cout << ".";
 
-                }
-                std::cout << *ip_part;
-            }
-            std::cout << std::endl;
+              }
+              std::cout << (*ip_part);
+          }
+          */
+
+         std::sort(ip_pool.begin(), ip_pool.end(), 
+          [](std::vector<int> &a, std::vector<int> &b){ return (a < b); });
+
+         size_t i{0};
+         for(; i < (*ip).size() - 1 ; ++i){
+          std::cout << (*ip)[i] << '.';
+         }
+          std::cout << (*ip)[i] << std::endl;
         }
 
         // 222.173.235.246

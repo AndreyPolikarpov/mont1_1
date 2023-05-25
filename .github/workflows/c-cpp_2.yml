@@ -3,7 +3,7 @@ name: 'C++ CI task2'
 on:
   push:
     branches:
-      - task_2
+      - main
       - feature/github_actions
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          release_name: Release ip_filter ${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -36,6 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ipfilterhw-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: ipfilterhw-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./ipfilter-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: ipfilter-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package

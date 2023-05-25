@@ -20,7 +20,7 @@ jobs:
       - run: cmake --build . --target test
       - run: cmake --build . --target package
       - name: Create Release
-        id: create_release1
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,7 +35,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release1.outputs.upload_url }}
-          asset_path: ./ip_filter_hw-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: ip_filter_hw-0.0.${{ github.run_number }}-Linux.deb
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ipfilterhw-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: ipfilterhw-0.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package

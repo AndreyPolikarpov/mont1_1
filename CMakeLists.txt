@@ -34,11 +34,11 @@ target_link_libraries(ip_filter_cli PRIVATE ip_filter)
 target_link_libraries(test_version ${gtest_LIBRARIES} ip_filter gtest gtest_main)
 
 target_compile_options(ip_filter_cli PRIVATE
-    -Wall -Wextra -pedantic -Werror) 
+    -Wall -Wextra -pedantic -Werror  -Wno-unused-parameter) 
 target_compile_options(ip_filter PRIVATE
-    -Wall -Wextra -pedantic -Werror)
+    -Wall -Wextra -pedantic -Werror  -Wno-unused-parameter)
 target_compile_options(test_version PRIVATE
-    -Wall -Wextra -pedantic -Werror)
+    -Wall -Wextra -pedantic -Werror  -Wno-unused-parameter)
 
 install(TARGETS ip_filter_cli RUNTIME DESTINATION bin)
 

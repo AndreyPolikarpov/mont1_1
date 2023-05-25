@@ -25,7 +25,6 @@ auto split(const std::string &str, char d)
     std::string::size_type stop = str.find_first_of(d);
     while(stop != std::string::npos) {
 
-      //std::cout << str.substr(start, stop - start).c_str() << std::endl;
       r.push_back(std::atoi(str.substr(start, stop - start).c_str()));
       ++i;      
       start = stop + 1;
@@ -34,10 +33,19 @@ auto split(const std::string &str, char d)
       if(i > 3) break;
     }
 
-    //std::cout << str.substr(start, stop - start).c_str();
     r.push_back(std::atoi(str.substr(start, stop - start).c_str()));
 
     return r;
+}
+
+void print_ip_vec(const std::vector<int> &vec) {
+  if(vec.empty())
+    return;
+  size_t i{0};
+  for(auto &it : vec) {
+    std::cout << it <<  ((i == (vec.size() - 1)) ? '\n' :  '.');
+    ++i;
+  }  
 }
 
 int main(int argc, char const *argv[]) {
@@ -55,26 +63,26 @@ int main(int argc, char const *argv[]) {
 
         // TODO reverse lexicographically sort
 
-        for(auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip) {
-          /*
-          for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part) {
-              if (ip_part != ip->cbegin())
-              {
-                  std::cout << ".";
+        std::sort(ip_pool.begin(), ip_pool.end(), 
+          [](std::vector<int> &a, std::vector<int> &b){ return (a > b); });
 
-              }
-              std::cout << (*ip_part);
-          }
-          */
+        for(auto &it : ip_pool) {
+          print_ip_vec(it); 
+        }
 
-         std::sort(ip_pool.begin(), ip_pool.end(), 
-          [](std::vector<int> &a, std::vector<int> &b){ return (a < b); });
+        for(auto it=ip_pool.cbegin(); it!=ip_pool.cend(); ++it) {
+          if((*it)[0] == 1)
+            print_ip_vec((*it)); 
+        }
 
-         size_t i{0};
-         for(; i < (*ip).size() - 1 ; ++i){
-          std::cout << (*ip)[i] << '.';
-         }
-          std::cout << (*ip)[i] << std::endl;
+        for(auto it=ip_pool.cbegin(); it!=ip_pool.cend(); ++it) {
+          if(((*it)[0] == 46) && ((*it)[1] == 70))
+            print_ip_vec((*it)); 
+        }
+
+        for(const auto &it : ip_pool) {
+          if((it[0] == 46) || (it[1] == 46) || (it[2] == 46) || (it[3] == 46))
+            print_ip_vec(it); 
         }
 
         // 222.173.235.246

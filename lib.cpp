@@ -1,4 +1,5 @@
 #include "lib.h"
+#include "version.h"
 
 std::vector<int> split(const std::string &str, char d)
 {
@@ -19,4 +20,8 @@ std::vector<int> split(const std::string &str, char d)
     r.push_back(std::atoi(str.substr(start, stop - start).c_str()));
 
     return r;
+}
+
+int version() {
+  return PROJECT_VERSION_PATCH;
 }

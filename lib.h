@@ -12,4 +12,6 @@
 
 #include "lib.h"
 
+int version();
+
 std::vector<int> split(const std::string &str, char d);

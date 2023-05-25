@@ -1,3 +1,15 @@
 #pragma once
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <fstream>
+#include <string>
+#include <tuple>
+#include <algorithm>
 
-int version();
+#include "lib.h"
+
+std::vector<int> split(const std::string &str, char d);

@@ -1,11 +1,10 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <map>
 #include <cstring>
 
 namespace{
-  const size_t s_max_size_alloc{3};
+  size_t s_max_size_alloc{3};
 }
 
 template <class T> 
@@ -42,8 +41,18 @@ struct alloc_my{
 
   T *allocate(std::size_t n) {
 
-    if(offset >= (s_max_size_alloc-1)) 
-      throw std::range_error("Превышен размер аллокатора");
+    if(offset >= (s_max_size_alloc-1)) {
+      void *temp = std::malloc((s_max_size_alloc * 2) * sizeof(T));
+      if(temp== nullptr) {
+        throw std::range_error("Превышен размер аллокатора");  
+      }
+
+      std::memcpy(temp, pool, s_max_size_alloc);
+      std::free(pool);
+      pool = temp;
+      s_max_size_alloc = s_max_size_alloc * 2;
+      std::cout << "Размер аллокатора увеличился и стал равен : " << s_max_size_alloc << std::endl;
+    }
 
     T *p = (T*)pool + offset;
     std::cout << "allocate::offset " << offset << "[n = " << n << "]" << std::endl;
@@ -68,20 +77,28 @@ struct alloc_my{
     std::cout << " destroy " << p /*<< __PRETTY_FUNCTION__ */<< std::endl;
     p->~U();
   }
+
+  template <typename U>
+  U *last_element() {
+    return (pool + offset);
+  }
+
+  template <typename U>
+  U *first_element() {
+    return pool;
+  }
+  
+  //size_t size() { return offset;}  
 };
 
-int main() {
-
-  std::map<int, int, std::less<int>, alloc_my<std::pair<const int, int>>> m;  
-  try {
-    m[1] = 1;
-    m[2] = 2;
-    m[3] = 3;
-    m[4] = 4;
-    m[5] = 5;
-  } catch (const std::range_error &re) {
-    std::cerr << re.what() << std::endl;
-  }
-  return 0;
+template <class T, class U>
+constexpr bool operator== (const alloc_my<T>& a1, const alloc_my<U>& a2) noexcept
+{
+    return &a1 == &a2;
 }
 
+template <class T, class U>
+constexpr bool operator!= (const alloc_my<T>& a1, const alloc_my<U>& a2) noexcept
+{
+    return &a1 != &a2;
+}

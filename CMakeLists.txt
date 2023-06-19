@@ -5,7 +5,7 @@ set(PROJECT_VERSION 0.0.${PATCH_VERSION})
 
 project(allocator_cli VERSION ${PROJECT_VERSION})
 
-add_executable(allocator_cli allac.cpp)
+add_executable(allocator_cli main.cpp)
 
 set_target_properties(allocator_cli  PROPERTIES
     CXX_STANDARD 20

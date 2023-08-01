@@ -1,12 +1,11 @@
 #include <bits/iterator_concepts.h>
+#include <cstddef>
 #include <iostream>
 #include <memory>
 
 #include "alloc_my.hpp"
 
-template<typename T>
-class my_iterator;
-
+//class my_iterator;
 
 template <class T, class Allocator = alloc_my<T> >
 class my_vector {
@@ -24,12 +23,15 @@ public:
   }
 
   template<class U>
-  U* begin() { return alloc.first_element();}
+  U* begin() {
+      return alloc.template first_element<U>();
+  }
   template<class U>
-  U* end() { return (alloc.last_element());}
+  U* end() { return (alloc.template last_element<U>());}
 
   void push_back(T x) {
-      alloc.construct(&x);
+      
+      alloc.construct(alloc.allocate(1), x);
       ++size;
   }
 
@@ -48,6 +50,10 @@ public:
 
   bool empty() {
     return (size) ? false : true;
+  }
+
+  T operator[](size_t i) {
+    return *(alloc.first_element() + i);
   }
 
 /*
@@ -70,24 +76,26 @@ class my_iterator //: public std::iterator_traits<T>
 {
   //friend class my_vector<T>;
 public:
+  using value_type = T;
   using pointer = T*;
   using reference = T&;
 
   //my_iterator(pointer ptr) : i_p_(ptr) {};
-  explicit my_iterator(T *p) : i_p_(p) {};
+  explicit my_iterator(pointer p) : i_p_(p) {};
 
   reference operator*() const {return *i_p_;}
   pointer operator->() { return i_p_;}
 
   my_iterator& operator++() { i_p_++; return *this;}
-  my_iterator operator++(T) { my_iterator tmp = *this; ++(*this); return tmp;}
+  my_iterator operator++(int) { my_iterator tmp = *this; ++(*this); return tmp;}
 
   friend bool operator==(const my_iterator &a, const my_iterator &b) {return a.i_p_ == b.i_p_;}
   friend bool operator!=(const my_iterator &a, const my_iterator &b) {return a.i_p_ != b.i_p_;}
 
   bool operator==(const my_iterator &iter) { return i_p_ == iter.i_p_;}
-  bool operator!=(const my_iterator &iter) { return i_p_ != iter.i_p_;}  
+  bool operator!=(const my_iterator &iter) { return i_p_ != iter.i_p_;}
   
+
 /*
   my_iterator(const my_iterator &it) : i_p(it.i_p) {};
 

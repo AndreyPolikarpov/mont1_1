@@ -10,14 +10,13 @@ namespace{
 template <class T> 
 struct alloc_my{
   using value_type = T;
-
-  void* pool;
-  size_t offset;
-
 	using pointer = T *;
 	using const_pointer = const T *;
 	using reference = T &;
 	using const_reference = const T &;
+
+  pointer pool;
+  size_t offset;
 
   template <typename U>
 	struct rebind {
@@ -25,8 +24,7 @@ struct alloc_my{
 	};
 
   alloc_my() {
-    //pool = ::operator new(1000 * sizeof(T));
-    pool = malloc(s_max_size_alloc * sizeof(T));
+    pool = (pointer)malloc((s_max_size_alloc) * sizeof(T));
     std::cout << "allocate alloc_my " << pool <<  std::endl;
   }
   ~alloc_my(){
@@ -41,8 +39,8 @@ struct alloc_my{
 
   T *allocate(std::size_t n) {
 
-    if(offset >= (s_max_size_alloc-1)) {
-      void *temp = std::malloc((s_max_size_alloc * 2) * sizeof(T));
+    if(offset >= (s_max_size_alloc-2)) {
+      pointer temp = (pointer)std::malloc((s_max_size_alloc * 2) * sizeof(T));
       if(temp== nullptr) {
         throw std::range_error("Превышен размер аллокатора");  
       }
@@ -68,7 +66,7 @@ struct alloc_my{
 
   template <typename U, typename... Args>
   void construct(U *p, Args &&...args) {
-    std::cout << " construct " << p /*<< __PRETTY_FUNCTION__ */<< std::endl;
+    std::cout << " construct " << *p /*<< __PRETTY_FUNCTION__ */<< std::endl;
     ::new ((void *) p) U(std::forward<Args>(args)...);
   }
   
@@ -80,7 +78,7 @@ struct alloc_my{
 
   template <typename U>
   U *last_element() {
-    return (pool + offset);
+    return (pool + offset + 1/*end*/);
   }
 
   template <typename U>

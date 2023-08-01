@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -35,13 +36,14 @@ int main() {
     vec.push_back(2);
     vec.push_back(3);
 
+    my_iterator<int> iter_begin{vec.begin<int>()};
+    my_iterator<int> iter_end{vec.end<int>()};
     
-    
- 
-  for (auto it = vec.begin(); it != vec.end(); ++it) {
-    std::cout << *it << " ";
-  }
-    
+    while (iter_begin != iter_end) {
+      std::cout << *iter_begin << std::endl;
+      ++iter_begin;
+    }
+
   } catch (const std::range_error &re) {
     std::cerr << re.what() << std::endl;
   }

@@ -1,30 +1,32 @@
+#include <bits/iterator_concepts.h>
 #include <iostream>
 #include <memory>
 
 #include "alloc_my.hpp"
 
+template<typename T>
+class my_iterator;
+
+
 template <class T, class Allocator = alloc_my<T> >
 class my_vector {
 public:
-
+/*
   //class my_iterator;
   typedef my_iterator<int> iterator;
   typedef my_iterator<const int> const_iterator;
   //typedef my_iterator<const T> const_iterator;
+*/
 
   my_vector() = default;
   my_vector(std::initializer_list<T> values) {
     alloc.construct(values);
   }
 
-  my_iterator begin() {
-    return my_iterator(alloc.first_element());
-  }
-
-  my_iterator end() {
-    return my_iterator(alloc.last_element());
-  }
-
+  template<class U>
+  U* begin() { return alloc.first_element();}
+  template<class U>
+  U* end() { return (alloc.last_element());}
 
   void push_back(T x) {
       alloc.construct(&x);
@@ -64,24 +66,35 @@ private:
 };
 
 template <class T>
-class my_iterator : public std::iterator_traits<T> 
+class my_iterator //: public std::iterator_traits<T> 
 {
-  friend class my_vector<T>;
+  //friend class my_vector<T>;
 public:
+  using pointer = T*;
+  using reference = T&;
+
+  //my_iterator(pointer ptr) : i_p_(ptr) {};
+  explicit my_iterator(T *p) : i_p_(p) {};
+
+  reference operator*() const {return *i_p_;}
+  pointer operator->() { return i_p_;}
+
+  my_iterator& operator++() { i_p_++; return *this;}
+  my_iterator operator++(T) { my_iterator tmp = *this; ++(*this); return tmp;}
+
+  friend bool operator==(const my_iterator &a, const my_iterator &b) {return a.i_p_ == b.i_p_;}
+  friend bool operator!=(const my_iterator &a, const my_iterator &b) {return a.i_p_ != b.i_p_;}
+
+  bool operator==(const my_iterator &iter) { return i_p_ == iter.i_p_;}
+  bool operator!=(const my_iterator &iter) { return i_p_ != iter.i_p_;}  
+  
+/*
   my_iterator(const my_iterator &it) : i_p(it.i_p) {};
 
   my_iterator &operator=(T *p) {
     i_p = p;
     return *this;
   }
-
-  bool operator!=(const my_iterator &iter) {
-    return i_p != iter.i_p;
-  }  
-  
-  bool operator==(const my_iterator &iter) {
-    return i_p == iter.i_p;
-  } 
 
   my_iterator &operator++() {
     ++i_p;
@@ -91,9 +104,9 @@ public:
   typename my_iterator::reference operator*() const {
     return *i_p;
   }
-
+*/
 private:   
-  my_iterator(T *p) noexcept : i_p(p) {};
-  my_iterator(const T *p) noexcept : i_p(p) {};
-  T *i_p;
+  //my_iterator(T *p) noexcept : i_p_(p) {};
+  //my_iterator(const T *p) noexcept : i_p_(p) {};
+  pointer i_p_;
 };

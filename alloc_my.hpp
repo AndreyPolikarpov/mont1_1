@@ -25,10 +25,10 @@ struct alloc_my{
 
   alloc_my() {
     pool = (pointer)malloc((s_max_size_alloc) * sizeof(T));
-    std::cout << "allocate alloc_my " << pool <<  std::endl;
+    //std::cout << "allocate alloc_my " << pool <<  std::endl;
   }
   ~alloc_my(){
-    std::cout << "allocate ~alloc_my " << pool << std::endl;
+    //std::cout << "allocate ~alloc_my " << pool << std::endl;
     //::operator delete(pool); 
     free(pool);
   };
@@ -49,11 +49,11 @@ struct alloc_my{
       std::free(pool);
       pool = temp;
       s_max_size_alloc = s_max_size_alloc * 2;
-      std::cout << "Размер аллокатора увеличился и стал равен : " << s_max_size_alloc << std::endl;
+      //std::cout << "Размер аллокатора увеличился и стал равен : " << s_max_size_alloc << std::endl;
     }
 
     T *p = (T*)pool + offset;
-    std::cout << "allocate::offset " << offset << "[n = " << n << "]" << std::endl;
+    //std::cout << "allocate::offset " << offset << "[n = " << n << "]" << std::endl;
     ++offset;
     return p;
   }
@@ -61,24 +61,24 @@ struct alloc_my{
   void deallocate(T *p, std::size_t n) {
     std::memset(p, 0, (sizeof(T) * n));
     --offset;
-    std::cout << "deallocate::offset " << "[n = " << n << "]" << offset <<  std::endl;
+    //std::cout << "deallocate::offset " << "[n = " << n << "]" << offset <<  std::endl;
   }
 
   template <typename U, typename... Args>
   void construct(U *p, Args &&...args) {
-    std::cout << " construct " << *p /*<< __PRETTY_FUNCTION__ */<< std::endl;
+    //std::cout << " construct " << p /*<< __PRETTY_FUNCTION__ */<< std::endl;
     ::new ((void *) p) U(std::forward<Args>(args)...);
   }
   
   template <typename U>
   void destroy(U *p) {
-    std::cout << " destroy " << p /*<< __PRETTY_FUNCTION__ */<< std::endl;
+    //std::cout << " destroy " << p /*<< __PRETTY_FUNCTION__ */<< std::endl;
     p->~U();
   }
 
   template <typename U>
   U *last_element() {
-    return (pool + offset + 1/*end*/);
+    return (pool + offset);
   }
 
   template <typename U>

@@ -5,17 +5,9 @@
 
 #include "alloc_my.hpp"
 
-//class my_iterator;
-
 template <class T, class Allocator = alloc_my<T> >
 class my_vector {
 public:
-/*
-  //class my_iterator;
-  typedef my_iterator<int> iterator;
-  typedef my_iterator<const int> const_iterator;
-  //typedef my_iterator<const T> const_iterator;
-*/
 
   my_vector() = default;
   my_vector(std::initializer_list<T> values) {
@@ -30,7 +22,6 @@ public:
   U* end() { return (alloc.template last_element<U>());}
 
   void push_back(T x) {
-      
       alloc.construct(alloc.allocate(1), x);
       ++size;
   }
@@ -55,26 +46,13 @@ public:
   T operator[](size_t i) {
     return *(alloc.first_element() + i);
   }
-
-/*
-  bool operator=(const my_vector &b) {
-    std::swap(alloc, b.alloc);
-    std::swap(size, b.size);
-    ~b.alloc;
-
-    return true;
-  }
-*/  
-
 private:
   std::size_t size = 0;    
   Allocator alloc;  
 };
 
 template <class T>
-class my_iterator //: public std::iterator_traits<T> 
-{
-  //friend class my_vector<T>;
+class my_iterator {
 public:
   using value_type = T;
   using pointer = T*;
@@ -94,27 +72,30 @@ public:
 
   bool operator==(const my_iterator &iter) { return i_p_ == iter.i_p_;}
   bool operator!=(const my_iterator &iter) { return i_p_ != iter.i_p_;}
-  
 
-/*
-  my_iterator(const my_iterator &it) : i_p(it.i_p) {};
-
-  my_iterator &operator=(T *p) {
-    i_p = p;
-    return *this;
-  }
-
-  my_iterator &operator++() {
-    ++i_p;
-    return *this;  
-  } 
-
-  typename my_iterator::reference operator*() const {
-    return *i_p;
-  }
-*/
-private:   
-  //my_iterator(T *p) noexcept : i_p_(p) {};
-  //my_iterator(const T *p) noexcept : i_p_(p) {};
+private:
   pointer i_p_;
+};
+
+template <class T, class Allocator = std::allocator<T> >
+class my_vector_allocator {
+public:
+void push_back(const T& x) {
+    if (size == capacity) {
+        T* newData = alloc.allocate(capacity);
+        std::copy(data, data + capacity * sizeof(T), newData); //naive
+        std::swap(newData, data);
+        alloc.deallocate(newData, capacity);
+    }
+  
+   ::new((void*)(data + size * sizeof(T))) T(x);
+    ++size;
+}
+
+private:
+    std::size_t size = 0;
+    std::size_t capacity = 0;
+    T* data = nullptr;
+
+    Allocator alloc;
 };

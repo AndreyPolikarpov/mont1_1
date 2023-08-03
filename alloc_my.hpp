@@ -16,7 +16,7 @@ struct alloc_my{
 	using const_reference = const T &;
 
   pointer pool;
-  size_t offset;
+  size_t offset{0};
 
   template <typename U>
 	struct rebind {

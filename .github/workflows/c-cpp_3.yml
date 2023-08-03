@@ -3,7 +3,7 @@ name: 'C++ CI task3'
 on:
   push:
     branches:
-      - task_2
+      - task_3
       - feature/github_actions
 
 jobs:

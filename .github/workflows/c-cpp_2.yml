@@ -1,4 +1,4 @@
-name: 'C++ CI task2'
+name: 'C++ CI task3'
 
 on:
   push:

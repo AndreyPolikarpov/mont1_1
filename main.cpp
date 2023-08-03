@@ -6,6 +6,7 @@
 #include <cstring>
 
 #include "vector_my.hpp"
+#include "lib.h"
 
 int factorial(int i) {
   if(i==0) 
@@ -55,4 +56,3 @@ int main() {
   }
   return 0;
 }
-

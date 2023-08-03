@@ -17,6 +17,7 @@ target_include_directories(allocator
     PRIVATE "${CMAKE_BINARY_DIR}")
 
 target_link_libraries(allocator_cli PRIVATE allocator)
+target_link_libraries(allocator)
 
 target_compile_options(allocator_cli PRIVATE
     -Wall -Wextra -pedantic -Werror  -Wno-unused-parameter) 
